@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Secret Message ❤️</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      font-family: 'Poppins', sans-serif;
+      overflow: hidden;
+      position: relative;
+      background: pink;
+    }
+
+    .lock-screen, .message-screen {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .lock-screen {
+      background: linear-gradient(135deg, #ff758c, #ff7eb3);
+      color: white;
+      text-align: center;
+    }
+
+    .lock-box {
+      background: rgba(255,255,255,0.15);
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+      backdrop-filter: blur(10px);
+    }
+
+    .lock-screen h2 { margin-bottom: 20px; font-size: 1.8rem; }
+
+    .lock-screen input {
+      font-size: 1.5rem;
+      text-align: center;
+      padding: 10px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+      background: #fff;
+      width: 120px;
+    }
+
+    .keypad {
+      display: grid;
+      grid-template-columns: repeat(3, 60px);
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .key {
+      background: #e63946;
+      color: white;
+      font-size: 1.2rem;
+      border: none;
+      border-radius: 8px;
+      padding: 15px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .key:hover { background: #ff4d6d; }
+
+    .message-screen {
+      color: #e63946;
+      font-size: 2rem;
+      font-weight: bold;
+      overflow: hidden;
+      display: none;
+      text-align: center;
+      padding: 20px;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    .image-row {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      z-index: 2;
+      position: relative;
+    }
+
+    .image-row img {
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      transition: transform 0.3s;
+    }
+    .image-row img:hover { transform: scale(1.1); }
+
+    .message-text {
+      z-index: 2;
+      position: relative;
+      font-size: 1.8rem;
+      text-align: center;
+      line-height: 1.5;
+      padding: 10px 20px;
+      background: rgba(255,255,255,0.5);
+      border-radius: 12px;
+    }
+
+    .heart {
+      position: absolute;
+      color: red;
+      font-size: 20px;
+      animation: float 6s linear infinite;
+      opacity: 0.7;
+      z-index: 1;
+    }
+
+    @keyframes float {
+      from { transform: translateY(100vh) scale(1); opacity: 1; }
+      to { transform: translateY(-10vh) scale(1.5); opacity: 0; }
+    }
+
+    .lyrics-container {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .lyric-line {
+      font-size: 1.6rem;
+      font-weight: bold;
+      color: white;
+      text-shadow: 0 0 8px white, 0 0 12px white;
+      opacity: 0;
+      margin: 5px 0;
+      position: absolute;
+    }
+  </style>
+</head>
+<body>
+
+<div class="lock-screen" id="lockScreen">
+  <div class="lock-box">
+    <h2>Enter Your Secret Passcode 💕</h2>
+    <input type="password" id="codeInput" maxlength="4" readonly>
+    <div class="keypad">
+      <button class="key" onclick="addDigit('1')">1</button>
+      <button class="key" onclick="addDigit('2')">2</button>
+      <button class="key" onclick="addDigit('3')">3</button>
+      <button class="key" onclick="addDigit('4')">4</button>
+      <button class="key" onclick="addDigit('5')">5</button>
+      <button class="key" onclick="addDigit('6')">6</button>
+      <button class="key" onclick="addDigit('7')">7</button>
+      <button class="key" onclick="addDigit('8')">8</button>
+      <button class="key" onclick="addDigit('9')">9</button>
+      <button class="key" onclick="clearCode()">⌫</button>
+      <button class="key" onclick="addDigit('0')">0</button>
+      <button class="key" onclick="checkCode()">✔</button>
+    </div>
+  </div>
+</div>
+
+<div class="message-screen" id="messageScreen">
+  <div class="lyrics-container" id="lyricsContainer"></div>
+
+  <div class="image-row">
+    <img src="Pic1.jpg">
+    <img src="Pic2.jpg">
+    <img src="Pic3.jpg">
+    <img src="Pic4.jpg">
+  </div>
+
+  <p class="message-text">
+    Miss you! <br>
+    Love you a lot 🖤🌙
+  </p>
+
+  <audio id="bgMusic" loop>
+    <source src="Ruth.mp3" type="audio/mpeg">
+  </audio>
+</div>
+
+<script>
+let input = document.getElementById("codeInput");
+
+function addDigit(num){ if(input.value.length<4) input.value+=num; }
+function clearCode(){ input.value = input.value.slice(0,-1); }
+
+function checkCode(){
+  if(input.value === "2819"){
+    document.getElementById("lockScreen").style.display="none";
+    let msgScreen=document.getElementById("messageScreen");
+    msgScreen.style.display="flex";
+    generateHearts();
+    playMusic();
+    showLyrics();
+  } else {
+    alert("Wrong Passcode!");
+    input.value="";
+  }
+}
+
+function playMusic(){
+  let music=document.getElementById("bgMusic");
+  music.play().catch(err=>console.log("Autoplay blocked:", err));
+}
+
+function generateHearts(){
+  setInterval(()=>{
+    let heart=document.createElement("div");
+    heart.classList.add("heart");
+    heart.innerHTML="❤️";
+    heart.style.left=Math.random()*100+"vw";
+    heart.style.fontSize=(Math.random()*20+15)+"px";
+    heart.style.animationDuration=(Math.random()*3+3)+"s";
+    document.getElementById("messageScreen").appendChild(heart);
+    setTimeout(()=>heart.remove(),6000);
+  },400);
+}
+
+// Lyrics split into 2 per line
+const lyrics = [
+  "And I've heard of a love that comes once in a lifetime | And I'm pretty sure that you are that love of mine",
+  "'Cause I'm in a field of dandelions | Wishing on every one that you'd be mine, mine",
+  "And I see forever in your eyes | I feel okay when I see you smile, smile",
+  "Wishing on dandelions all of the time | Praying to God that one day you'll be mine",
+  "Wishing on dandelions all of the time, all of the time | I think that you are the one for me",
+  "'Cause it gets so hard to breathe | When you're looking at me, I've never felt so alive and free",
+  "When you're looking at me, I've never felt so happy | "
+];
+
+function showLyrics(){
+  const container = document.getElementById("lyricsContainer");
+  let index=0;
+
+  function showNext(){
+    if(index<lyrics.length){
+      const line = document.createElement("div");
+      line.className="lyric-line";
+      line.innerHTML = lyrics[index++].split("|").join("<br>");
+      container.appendChild(line);
+      animateLine(line);
+      setTimeout(showNext, 7500); // 4s gap
+    }
+  }
+
+  function animateLine(line){
+    let pos=-50;
+    const anim = setInterval(()=>{
+      if(pos>window.innerHeight){ 
+        clearInterval(anim); 
+        line.remove();
+      } else { 
+        pos+=1; 
+        line.style.bottom = pos+"px"; 
+        line.style.opacity = Math.min(1,pos/150); 
+      }
+    },15);
+  }
+
+  showNext();
+}
+</script>
+</body>
+</html>
